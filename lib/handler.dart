@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:dart_flux/core/server/routing/interface/http_entity.dart';
 import 'package:dart_flux/core/server/routing/models/http_method.dart';
 import 'package:dart_flux/core/server/routing/repo/handler.dart';
+import 'package:dart_flux/dart_flux.dart';
 import 'package:dart_id/dart_id.dart';
 
 class AppHandlers {
@@ -65,26 +66,25 @@ class ServerConstants {
 }
 
 FutureOr<HttpEntity> corsByPassing(request, response, pathArgs) async {
-  final method = request.method;
-  final response = request.response;
-
-  // Set CORS headers
-  response.headers
-    ..set(HttpHeaders.accessControlAllowOriginHeader, '*')
-    ..set(
-      HttpHeaders.accessControlAllowMethodsHeader,
-      'GET, POST, PUT, DELETE, PATCH, OPTIONS',
-    );
-  response.headers.set(
-    HttpHeaders.accessControlAllowHeadersHeader,
-    'Origin, Content-Type, Accept, Authorization',
-  );
-
-  if (method == 'OPTIONS') {
+  if (request.method == 'OPTIONS') {
+    final response = request.response;
+    addCorsHeaders(response);
     response.statusCode = HttpStatus.noContent;
-    await response.close();
+    response.close();
     return response;
   }
-
+  addCorsHeaders(response);
   return request;
+}
+
+void addCorsHeaders(FluxResponse response) {
+  response.headers.add(
+    'Access-Control-Allow-Origin',
+    '*',
+  ); // or restrict to your domain
+  response.headers.add('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  response.headers.add(
+    'Access-Control-Allow-Headers',
+    'Origin, Content-Type, Accept',
+  );
 }
