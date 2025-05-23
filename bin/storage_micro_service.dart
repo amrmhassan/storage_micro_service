@@ -9,6 +9,6 @@ void main(List<String> arguments) async {
         ..middleware(corsByPassing)
             .handler(AppHandlers.uploadHandler)
             .handler(AppHandlers.downloadHandler);
-  Server server = Server(InternetAddress.anyIPv4, 6000, router);
+  Server server = Server(InternetAddress.anyIPv4, 4001, router);
   await server.run();
 }
