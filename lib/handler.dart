@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'dart:io';
 
+import 'package:dart_flux/core/server/routing/models/flux_response.dart';
 import 'package:dart_flux/core/server/routing/models/http_method.dart';
 import 'package:dart_flux/core/server/routing/repo/handler.dart';
 import 'package:dart_id/dart_id.dart';
@@ -60,4 +62,43 @@ class AppHandlers {
 
 class ServerConstants {
   static const String uploadFolder = './uploadedFiles';
+}
+
+FutureOr<FluxResponse> corsByPassing(request, response, pathArgs) async {
+  var method = request.request.method;
+
+  // Extract requested headers from the OPTIONS preflight request
+  var requestedHeaders =
+      request.request.headers[HttpHeaders.accessControlRequestHeadersHeader];
+
+  // Add CORS headers
+  request.response.headers
+    ..set(HttpHeaders.accessControlAllowOriginHeader, '*')
+    ..set(HttpHeaders.accessControlAllowHeadersHeader, '*')
+    ..set(
+      HttpHeaders.accessControlAllowMethodsHeader,
+      'GET, POST, PUT, DELETE, PATCH, OPTIONS',
+    );
+
+  // Allow the requested headers from the preflight request
+  if (requestedHeaders != null) {
+    request.response.headers.set(
+      HttpHeaders.accessControlAllowHeadersHeader,
+      requestedHeaders.join(', '),
+    );
+  } else {
+    // If no specific headers were requested, allow all common headers
+    request.response.headers.set(
+      HttpHeaders.accessControlAllowHeadersHeader,
+      '*',
+    );
+  }
+
+  if (method == 'OPTIONS') {
+    request.request.response.statusCode = HttpStatus.noContent;
+    await response.close();
+    return response;
+  }
+
+  return request;
 }
