@@ -65,40 +65,37 @@ class ServerConstants {
 }
 
 FutureOr<HttpEntity> corsByPassing(request, response, pathArgs) async {
-  var method = request.request.method;
+  final method = request.method;
+  final response = request.response;
 
-  // Extract requested headers from the OPTIONS preflight request
-  var requestedHeaders =
-      request.request.headers[HttpHeaders.accessControlRequestHeadersHeader];
-
-  // Add CORS headers
-  request.response.headers
+  // Set CORS headers
+  response.headers
     ..set(HttpHeaders.accessControlAllowOriginHeader, '*')
-    ..set(HttpHeaders.accessControlAllowHeadersHeader, '*')
     ..set(
       HttpHeaders.accessControlAllowMethodsHeader,
       'GET, POST, PUT, DELETE, PATCH, OPTIONS',
     );
 
-  // Allow the requested headers from the preflight request
-  if (requestedHeaders != null) {
-    request.response.headers.set(
+  // Handle Access-Control-Request-Headers
+  final requestedHeaders =
+      request.headers[HttpHeaders.accessControlRequestHeadersHeader];
+  if (requestedHeaders != null && requestedHeaders.isNotEmpty) {
+    response.headers.set(
       HttpHeaders.accessControlAllowHeadersHeader,
       requestedHeaders.join(', '),
     );
   } else {
-    // If no specific headers were requested, allow all common headers
-    request.response.headers.set(
+    response.headers.set(
       HttpHeaders.accessControlAllowHeadersHeader,
-      '*',
+      'Origin, Content-Type, Accept, Authorization',
     );
   }
 
   if (method == 'OPTIONS') {
-    request.request.response.statusCode = HttpStatus.noContent;
+    response.statusCode = HttpStatus.noContent;
     await response.close();
     return response;
   }
 
-  return request;
+  return response; // or return something meaningful for non-OPTIONS
 }
