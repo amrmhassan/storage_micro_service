@@ -75,21 +75,10 @@ FutureOr<HttpEntity> corsByPassing(request, response, pathArgs) async {
       HttpHeaders.accessControlAllowMethodsHeader,
       'GET, POST, PUT, DELETE, PATCH, OPTIONS',
     );
-
-  // Handle Access-Control-Request-Headers
-  final requestedHeaders =
-      request.headers[HttpHeaders.accessControlRequestHeadersHeader];
-  if (requestedHeaders != null && requestedHeaders.isNotEmpty) {
-    response.headers.set(
-      HttpHeaders.accessControlAllowHeadersHeader,
-      requestedHeaders.join(', '),
-    );
-  } else {
-    response.headers.set(
-      HttpHeaders.accessControlAllowHeadersHeader,
-      'Origin, Content-Type, Accept, Authorization',
-    );
-  }
+  response.headers.set(
+    HttpHeaders.accessControlAllowHeadersHeader,
+    'Origin, Content-Type, Accept, Authorization',
+  );
 
   if (method == 'OPTIONS') {
     response.statusCode = HttpStatus.noContent;
