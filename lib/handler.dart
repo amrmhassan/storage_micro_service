@@ -81,10 +81,15 @@ void addCorsHeaders(FluxResponse response) {
   response.headers.add(
     'Access-Control-Allow-Origin',
     '*',
-  ); // or restrict to your domain
-  response.headers.add('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  ); // Allow requests from any origin
+  response.headers.add(
+    'Access-Control-Allow-Methods',
+    'GET, POST, PUT, DELETE, PATCH, OPTIONS',
+  );
   response.headers.add(
     'Access-Control-Allow-Headers',
-    'Origin, Content-Type, Accept',
-  );
+    '*',
+  ); // Allow all headers
+  response.headers.add('Access-Control-Allow-Credentials', 'true');
+  response.headers.add('Access-Control-Max-Age', '86400'); // 24 hours
 }
