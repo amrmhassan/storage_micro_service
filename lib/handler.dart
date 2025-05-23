@@ -97,5 +97,5 @@ FutureOr<HttpEntity> corsByPassing(request, response, pathArgs) async {
     return response;
   }
 
-  return response; // or return something meaningful for non-OPTIONS
+  return request;
 }
