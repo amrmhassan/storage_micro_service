@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:dart_flux/core/server/routing/models/flux_response.dart';
+import 'package:dart_flux/core/server/routing/interface/http_entity.dart';
 import 'package:dart_flux/core/server/routing/models/http_method.dart';
 import 'package:dart_flux/core/server/routing/repo/handler.dart';
 import 'package:dart_id/dart_id.dart';
@@ -64,7 +64,7 @@ class ServerConstants {
   static const String uploadFolder = './uploadedFiles';
 }
 
-FutureOr<FluxResponse> corsByPassing(request, response, pathArgs) async {
+FutureOr<HttpEntity> corsByPassing(request, response, pathArgs) async {
   var method = request.request.method;
 
   // Extract requested headers from the OPTIONS preflight request
